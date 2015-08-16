@@ -141,16 +141,16 @@ public class Application {
 
 	private static void rentFilms() {
 
-		rentalService.rent(karen, sanAndreas, 1);
-		rentalService.rent(karen, madMax, 2);
-		rentalService.rent(karen, madMax, 1);
-		rentalService.rent(karen, harryPotter, 3);
+		rentalService.rent(associates.findByName("Karen"), sanAndreas, 1);
+		rentalService.rent(associates.findByName("Karen"), madMax, 2);
+		rentalService.rent(associates.findByName("Karen"), madMax, 1);
+		rentalService.rent(associates.findByName("Karen"), harryPotter, 3);
 
-		rentalService.rent(rick, casablanca, 2);
-		rentalService.rent(rick, terminator, 3);
+		rentalService.rent(associates.findByName("Rick"), casablanca, 2);
+		rentalService.rent(associates.findByName("Rick"), terminator, 3);
 
-		rentalService.rent(peter, casablanca, 5);
-		rentalService.rent(peter, madMax, 3);
+		rentalService.rent(associates.findByName("Peter"), casablanca, 5);
+		rentalService.rent(associates.findByName("Peter"), madMax, 3);
 	}
 
 	private static void logBootstrapData() {

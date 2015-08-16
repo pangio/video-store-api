@@ -1,32 +1,34 @@
-# Video Rental API.
+# Video Rental API
 
 # Basic Overview
-### Associate
-Rent a Video
+## Entities & Operations
+### Associate:
+- Rent a Video
 
-Return a Video
+- Return a Video
 
-Pending rentals to be returned 
+- Pending rentals to be returned 
 
-Profile (bonus points and history)
+- Profile (bonus points and history)
 
-### Video
-all CRUD operations
+### Video:
+- all CRUD operations
 
-### FilmType
-List & FindById
+### FilmType:
+- List & FindById
 
-### PriceType
-List & FindById
+### PriceType:
+- List & FindById
 
 
 
 # Stack
 *  Java 8
-*  JPA
+*  JPA, Spring Data
 *  Spring Boot, Spring MVC
 *  jUnit, Mockito
 *  Gradle
+*  H2 in-memory DB
 
 # Prerequisites
 *  jdk 1.8
@@ -67,7 +69,7 @@ https://github.com/pangio/video-store-api.git
 
 # Associates
 
-* Rent a Video.
+#### Rent a Video
 
 POST: ```http://localhost:8080/associates/{associateId}/rent```
 
@@ -79,7 +81,7 @@ JSON body example:
 }
 ```
 
-### Response
+**Response**
 
 200 OK - if the rental was successful
 
@@ -90,9 +92,9 @@ JSON sample response:
 }
 ```
 
-NOTE: if ```fees``` are ```0```  means no rental has been created because video is out of stock.
+NOTE: if ```fees``` are ```0```  means no rental has been created because video is out of stock
 
-### Errors
+**Errors**
 
 404 Not Found - for an invalid associate id
 
@@ -100,11 +102,11 @@ NOTE: if ```fees``` are ```0```  means no rental has been created because video 
 
 
 
-* Return a Video to the Store.
+#### Return a Video to the Store
 
 GET: ```http://localhost:8080/associates/{associateId}/return/{videoId}```
 
-### Response
+**Response**
 200 OK - if the rental was returned successfully
 
 JSON sample response:
@@ -116,7 +118,7 @@ JSON sample response:
 
 NOTE: if ```extraFees``` are ```0``` means no Extra Fees should be charged to the customer.
 
-### Errors
+**Errors**
 
 404 Not Found - for an invalid associate id
 
@@ -124,11 +126,11 @@ NOTE: if ```extraFees``` are ```0``` means no Extra Fees should be charged to th
 
 
 
-* List of Rentals Pending to return to the Store.
+#### List of Rentals Pending to return to the Store
 
 GET: ```http://localhost:8080/associates/{associateId}/pending```
 
-### Response
+**Response**
 
 200 OK - list of pending rentals
 
@@ -161,18 +163,17 @@ JSON sample response:
 ]
 ```
 
-
-### Errors
+**Errors**
 
 404 Not Found - for an invalid associate id
 
 
 
-* Profile of the Associate.
+#### Profile of the Associate
 
 GET: ```http://localhost:8080/associates/{associateId}```
 
-### Response
+**Response**
 
 200 OK - associate's  profile
 
@@ -210,14 +211,14 @@ JSON sample response:
 }
 ```
 
-### Errors
+**Errors**
 
 404 Not Found - for an invalid associate id
 
 
 
 # Videos
-* Creates a new Video.
+#### Creates a new Video
 
 POST: ```http://localhost:8080/videos```
 
@@ -231,7 +232,7 @@ JSON body example:
 }
 ```
 
-* Updates a new Video.
+#### Updates a new Video
 
 PUT: ```http://localhost:8080/videos/{videoId}```
 
@@ -245,27 +246,28 @@ JSON body example:
 }
 ```
 
-* Returns the list of all Videos.
+#### Returns the list of all Videos
 
 GET: ```http://localhost:8080/videos```
 
-* Finds a Video by id.
+#### Finds a Video by id
 
 GET: ```http://localhost:8080/videos/{videoId}```
 
-* Deletes a Video. Performs a virtual delete, changes the video status and becomes unavailable for future rentals  
+#### Deletes a Video 
 
 DELETE: ```http://localhost:8080/videos/{videoId}```
 
+NOTE: Performs a virtual delete. Video is set as unavailable for further Rentals
 
 
 
 # PriceTypes
-* Returns the list of all PriceType.
+#### Returns the list of all PriceType
 
 GET: ```http://localhost:8080/prices```
 
-* Finds a PriceType by id.
+#### Finds a PriceType by id
 
 GET: ```http://localhost:8080/prices/{priceTypeId}```
 
@@ -273,28 +275,27 @@ GET: ```http://localhost:8080/prices/{priceTypeId}```
 
 
 # FilmTypes
-* Returns the list of all FilmType.
+#### Returns the list of all FilmType
 
 GET: ```http://localhost:8080/types```
 
-* Finds a FilmType by id.
+#### Finds a FilmType by id
 
 GET: ```http://localhost:8080/types/{filmTypeId}```
 
 
 
 # Tests
-* Under the test source folder find the suite com.pangio.rental.api.AllTests.java (controller tests pending...)
+* The Test Suite [AllTest.java](src/test/java/com/pangio/rental/api/AllTests.java) contains some tests (more should be added)
+
 
 
 ### Notes & Assumptions
 * Associate: Customer of the Rental Store.
-* an Associate can rent one video at the time.
-* an Associate can return one video at the time.
-* an Associate rent one particular video. To rent it again, first it should be returned to the Store.
+* One Associate can not rent two (or more) copies of same video at the same time.
 * Videos are not deleted from DB. They are set as unavailable for further Rentals.
-* Bootstrap data was created in ```Application.java``` class to test the API manually.
+* Initial data was created in [Application.java](src/main/java/com/pangio/rental/api/Application.java)
 * Content Type should be set to ```application/json``` .
-* more tests should be added
-* no security
+* More tests should be added
+* Security should be added
 

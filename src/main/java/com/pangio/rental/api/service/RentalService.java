@@ -70,12 +70,6 @@ public class RentalService {
 			Rental rental = new Rental(associate, video, days);
 			repository.save(rental);
 
-			// Line below is only required by the Bootstrap Data in
-			// Application.java to get the Associate from the DB.
-			// By using the API, the Associate comes validated from the
-			// controller.
-			associate = associateService.findById(associate.getId());
-
 			associate.addBonusPoints(video.getFilmType().getBonusPoints());
 			associate.addRental(rental);
 			associateService.save(associate);
