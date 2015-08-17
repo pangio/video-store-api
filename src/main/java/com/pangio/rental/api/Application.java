@@ -33,24 +33,11 @@ import com.pangio.rental.api.service.RentalService;
 @EntityScan(basePackages = "com.pangio.rental")
 public class Application {
 
-	private static FilmType old;
-	private static FilmType regular;
-	private static FilmType newRelease;
 	private static FilmTypeRepository filmTypes;
 	private static VideoRepository videos;
 	private static PriceTypeRepository priceTypes;
 	private static AssociateRepository associates;
 	private static RentalService rentalService;
-	private static PriceType basic;
-	private static PriceType premium;
-	private static Video terminator;
-	private static Video casablanca;
-	private static Video madMax;
-	private static Video harryPotter;
-	private static Video sanAndreas;
-	private static Associate peter;
-	private static Associate rick;
-	private static Associate karen;
 
     private static final Logger logger = Logger.getLogger(Application.class);
 
@@ -65,85 +52,75 @@ public class Application {
 		createVideos();
 		createAssociates();
 		rentFilms();
-
-		logBootstrapData();
+		logInitData();
 	}
 
 	private static void getBeans(ConfigurableApplicationContext context) {
-		videos = context
-				.getBean(com.pangio.rental.api.repository.VideoRepository.class);
-		filmTypes = context
-				.getBean(com.pangio.rental.api.repository.FilmTypeRepository.class);
-		priceTypes = context
-				.getBean(com.pangio.rental.api.repository.PriceTypeRepository.class);
-		associates = context
-				.getBean(com.pangio.rental.api.repository.AssociateRepository.class);
-		rentalService = context
-				.getBean(com.pangio.rental.api.service.RentalService.class);
+		videos = context.getBean(com.pangio.rental.api.repository.VideoRepository.class);
+		filmTypes = context.getBean(com.pangio.rental.api.repository.FilmTypeRepository.class);
+		priceTypes = context.getBean(com.pangio.rental.api.repository.PriceTypeRepository.class);
+		associates = context.getBean(com.pangio.rental.api.repository.AssociateRepository.class);
+		rentalService = context.getBean(com.pangio.rental.api.service.RentalService.class);
 	}
 
-	private static void createFilmTypes() {
+	private static void createPriceTypes() {
+		PriceType basic = new PriceType("Basic", new Double(30));
+		priceTypes.save(basic);
 
-		old = new OldFilm();
+		PriceType premium = new PriceType("Premium", new Double(40));
+		priceTypes.save(premium);
+	}
+	
+	private static void createFilmTypes() {
+		PriceType basic = priceTypes.findByDescription("Basic");
+
+		FilmType old = new OldFilm();
 		old.setDescription("Old Film");
 		old.setPriceType(basic);
 		old.setBonusPoints(1);
 		filmTypes.save(old);
 
-		regular = new RegularFilm();
+		FilmType regular = new RegularFilm();
 		regular.setDescription("Regular Film");
 		regular.setPriceType(basic);
 		regular.setBonusPoints(1);
 		filmTypes.save(regular);
 
-		newRelease = new NewRelease();
+		FilmType newRelease = new NewRelease();
 		newRelease.setDescription("New Release");
-		newRelease.setPriceType(premium);
+		newRelease.setPriceType(priceTypes.findByDescription("Premium"));
 		newRelease.setBonusPoints(2);
 		filmTypes.save(newRelease);
 	}
 
-	private static void createPriceTypes() {
-		basic = new PriceType("Basic", new Double(30));
-		priceTypes.save(basic);
-
-		premium = new PriceType("Premium", new Double(40));
-		priceTypes.save(premium);
-	}
-
 	private static void createVideos() {
-		terminator = new Video("Terminator", 4, regular);
-		videos.save(terminator);
-
-		casablanca = new Video("Casablanca", 2, old);
-		videos.save(casablanca);
-
-		madMax = new Video("Mad Max", 5, newRelease);
-		videos.save(madMax);
-
-		harryPotter = new Video("Harry Potter", 6, regular);
-		videos.save(harryPotter);
-
-		sanAndreas = new Video("San Andreas", 7, newRelease);
-		videos.save(sanAndreas);
+		FilmType old = filmTypes.findByDescription("Old Film");
+		FilmType regular = filmTypes.findByDescription("Regular Film");
+		FilmType newRelease = filmTypes.findByDescription("New Release");
+		
+		videos.save(new Video("Terminator", 4, regular));
+		videos.save(new Video("Casablanca", 2, old));
+		videos.save(new Video("Mad Max", 5, newRelease));
+		videos.save(new Video("Harry Potter", 6, regular));
+		videos.save(new Video("San Andreas", 7, newRelease));
 	}
 
 	private static void createAssociates() {
-		karen = new Associate("Karen");
-		associates.save(karen);
-
-		rick = new Associate("Rick");
-		associates.save(rick);
-
-		peter = new Associate("Peter");
-		associates.save(peter);
+		associates.save(new Associate("Karen"));
+		associates.save(new Associate("Rick"));
+		associates.save(new Associate("Peter"));
 	}
 
 	private static void rentFilms() {
+		Video sanAndreas = videos.findByName("San Andreas");
+		Video madMax = videos.findByName("Mad Max");
+		Video harryPotter = videos.findByName("Harry Potter");
+		Video casablanca = videos.findByName("Casablanca");
+		Video terminator = videos.findByName("Terminator");
 
 		rentalService.rent(associates.findByName("Karen"), sanAndreas, 1);
 		rentalService.rent(associates.findByName("Karen"), madMax, 2);
-		rentalService.rent(associates.findByName("Karen"), madMax, 1);
+		rentalService.rent(associates.findByName("Karen"), madMax, 1); // Can't rent it, she has already rented Mad Max
 		rentalService.rent(associates.findByName("Karen"), harryPotter, 3);
 
 		rentalService.rent(associates.findByName("Rick"), casablanca, 2);
@@ -153,7 +130,7 @@ public class Application {
 		rentalService.rent(associates.findByName("Peter"), madMax, 3);
 	}
 
-	private static void logBootstrapData() {
+	private static void logInitData() {
 		for (PriceType p : priceTypes.findAll()) {
 			logger.info(p.getDescription()+" price is "+ p.getValue());			
 		}
